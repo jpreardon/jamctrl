@@ -26,11 +26,18 @@ Create the configured instance, wait for a public IPv4 address then update DNS:
 uv run main.py instance create
 ```
 
-Destroy the one configured managed instance. This deliberately leaves DNS
-unchanged and requires confirmation:
+Destroy the one configured managed instance. This leaves DNS unchanged and
+requires confirmation:
 
 ```bash
 uv run main.py instance destroy --managed --yes
+```
+
+To also remove the configured DNS A record after requesting destruction, add
+`--remove-dns`:
+
+```bash
+uv run main.py instance destroy --managed --yes --remove-dns
 ```
 
 To destroy a specific instance rather than the managed tagged instance, use

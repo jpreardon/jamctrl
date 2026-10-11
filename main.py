@@ -47,7 +47,7 @@ def parse_args() -> argparse.Namespace:
         "create", help="Create the instance and synchronize DNS."
     )
     destroy_parser = instance_subparsers.add_parser(
-        "destroy", help="Destroy an instance without changing DNS."
+        "destroy", help="Destroy an instance, optionally removing its DNS record."
     )
     instance_selection = destroy_parser.add_mutually_exclusive_group(
         required=True
@@ -62,6 +62,11 @@ def parse_args() -> argparse.Namespace:
     )
     destroy_parser.add_argument(
         "--yes", action="store_true", help="Confirm permanent destruction."
+    )
+    destroy_parser.add_argument(
+        "--remove-dns",
+        action="store_true",
+        help="Remove the configured DNS A record after requesting destruction.",
     )
     return parser.parse_args()
 
@@ -292,6 +297,17 @@ def update_dns_record(
         )
 
 
+def remove_dns_record(porkbun_config: dict, dns_config: dict) -> None:
+    """Remove the configured A record from Porkbun."""
+    domain = dns_config["domain"]
+    host = dns_config["host"]
+    logger.info(f"Removing A record for {host}.{domain}")
+    call_porkbun(
+        f"deleteByNameType/{domain}/A/{host}", porkbun_config
+    )
+    logger.info(f"DNS record removed: {host}.{domain}")
+
+
 def sync_dns(config: dict, instance: dict) -> None:
     """Update the configured DNS record from an active instance's IPv4 address."""
     dns_config = config["dns"]
@@ -337,9 +353,11 @@ def main() -> int:
                 instance_id = instance["id"]
             else:
                 instance_id = args.instance_id
-            logger.info(f"Destroying instance {instance_id} without changing DNS.")
+            logger.info(f"Destroying instance {instance_id}.")
             destroy_instance(api_key, instance_id)
             logger.info(f"Instance {instance_id} destruction requested.")
+            if args.remove_dns:
+                remove_dns_record(config["porkbun"], config["dns"])
         else:
             logger.info("Finding managed Vultr instance...")
             instance = get_managed_instance(api_key, instance_config["tag"])
