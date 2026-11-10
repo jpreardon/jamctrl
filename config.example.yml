@@ -10,6 +10,7 @@ vultr:
     backups: false
     ddos_protection: false
     enable_ipv6: false
+    activation_email: true
 
 porkbun:
   api_key: "your-porkbun-api-key"

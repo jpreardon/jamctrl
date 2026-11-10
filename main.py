@@ -190,7 +190,7 @@ def create_instance(api_key: str, instance_config: dict) -> dict:
             instance_config["startup_script"],
         ),
     }
-    for setting in ("backups", "ddos_protection", "enable_ipv6"):
+    for setting in ("backups", "ddos_protection", "enable_ipv6", "activation_email"):
         if setting in instance_config:
             payload[setting] = instance_config[setting]
     if "backups" in payload:
