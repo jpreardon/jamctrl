@@ -67,7 +67,7 @@ The `vultr.instance` section selects the managed instance:
 - `image`: Exact Vultr OS or Marketplace application name, such as `Docker`.
 - `startup_script`: Exact name of an existing Vultr startup script.
 - `label` and `tag`: Instance metadata. The tag must uniquely identify this tool's instance.
-- `backups`, `ddos_protection` and `enable_ipv6`: Optional Vultr provisioning settings.
+- `backups`, `ddos_protection`, `enable_ipv6` and `activation_email`: Optional Vultr provisioning settings.
 
 The create command resolves `image` and `startup_script` through the Vultr API
 before provisioning. It stops if a name does not match exactly one resource.
